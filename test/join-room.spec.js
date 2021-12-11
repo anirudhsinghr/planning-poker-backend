@@ -45,4 +45,3 @@ class JoinRoom {
     this.eventBroadcaster.broadcastNewJoinerToRoom(room);
   }
 }
-

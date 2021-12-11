@@ -1,13 +1,15 @@
 const expect = require("chai").expect;
 
-const { CreateRoom, InvalidArgumentError, RoomAlreadyExistsError } = require("../lib/usecase/create-room");
+const CreateRoom = require("../lib/usecase/create-room");
+const InvalidArgumentError = require("../lib/errors/invalid-argument");
+const RoomAlreadyExistsError = require("../lib/errors/room-already-exists");
 const RoomRepository = require("../lib/repositories/room.repository");
 const Room = require("../lib/entities/room");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const StubConnection = require("./stubs/stub-connection");
 
-describe("Chat Room", function() {
+describe("Create Room", function() {
 
   let roomRepository = null;
   let eventBroadcaster = null;
