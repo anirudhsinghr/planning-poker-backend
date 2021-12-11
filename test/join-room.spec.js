@@ -2,6 +2,7 @@ const Room = require("../lib/entities/room");
 const JoinRoom = require("../lib/usecase/join-room");
 const RoomRepository = require("../lib/repositories/room.repository");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
+const StubConnection = require("./stubs/stub-connection");
 const RoomNotFoundError = require("../lib/errors/room-not-found");
 
 const { expect } = require("chai");
@@ -17,21 +18,22 @@ describe("Join Room", function() {
   });
 
   it("Voter joining an existing room is broadcasted to all members in the room", function() {
-    const useCase = new createUsecase();
     const room = createRoom("123456");
+    const useCase = new createUsecase();
+    const input = createUseCaseInput({ roomId: "123456" });
+    
+    useCase.execute(input);
 
-    useCase.execute({ roomId: room.id, voterId: "new-user-id" });
-
-    expect(eventBroadcaster.broadcastNewJoinerCalledOnce()).to.be.true;
-    expect(eventBroadcaster.broadcastedNewJoinerToRoom(room)).to.be.true;
+    expect(eventBroadcaster.broadcastAddParticipantCalledOnce()).to.be.true;
+    expect(eventBroadcaster.addedParticipantsToCorrectRoom(input)).to.be.true;
     expect(room.voterCount()).to.equal(1);
   });
 
   it("Voter joining a non-existant room throws error", function() {
     const useCase = new createUsecase();
-
+    const input = createUseCaseInput({ roomId: "non-existant" });
     expect(
-      () => useCase.execute({ roomId: "invalid-room-id", voterId: "new-user-id" })
+      () => useCase.execute(input)
     ).to.throw(RoomNotFoundError);
   });
 
@@ -43,5 +45,9 @@ describe("Join Room", function() {
 
   function createUsecase() {
     return new JoinRoom(roomRepository, eventBroadcaster);
+  }
+
+  function createUseCaseInput(overrides) {
+    return { roomId: "new-room-id", userId: "new-user-id", connection: new StubConnection(), ...overrides }
   }
 });
