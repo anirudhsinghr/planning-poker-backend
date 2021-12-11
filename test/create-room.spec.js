@@ -26,7 +26,7 @@ describe("Create Room", function() {
     const room = useCase.execute(input);
 
     expect(room).to.not.be.null;
-    expect(roomRepository.findById(input.id)).to.equal(room);
+    expect(roomRepository.findById(input.roomId)).to.equal(room);
   });
 
   it("a new room is created with a single user", function() {
@@ -35,14 +35,14 @@ describe("Create Room", function() {
     
     useCase.execute(input);
     
-    expect(eventBroadcaster.addedParticipantsToCorrectRoom(input));
+    expect(eventBroadcaster.addedParticipantsToCorrectRoom(input)).to.be.true;
   });
 
   it("throws error when a new room is created with invalid data", function() {
     const useCase = createUseCase();
     
     expect(
-      () => useCase.execute(createUseCaseInput({id: null}))
+      () => useCase.execute(createUseCaseInput({roomId: null}))
     ).to.throw(InvalidArgumentError);
 
     expect(
@@ -57,7 +57,7 @@ describe("Create Room", function() {
   it("throws error when a new room is created with a non-unique id", function() {
     const useCase = createUseCase();
     const input = createUseCaseInput();
-    roomRepository.save(new Room(input.id)); 
+    roomRepository.save(new Room(input.roomId)); 
 
     expect(() => useCase.execute(input)).to.throw(RoomAlreadyExistsError);
   });
@@ -67,7 +67,7 @@ describe("Create Room", function() {
   }
 
   function createUseCaseInput(overrides) {
-    return { id: "new-room-id", userId: "new-user-id", connection: new StubConnection(), ...overrides }
+    return { roomId: "new-room-id", userId: "new-user-id", connection: new StubConnection(), ...overrides }
   }
 });
 
