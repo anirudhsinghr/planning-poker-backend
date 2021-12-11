@@ -24,11 +24,13 @@ describe("Chat Room", function() {
 
   it("throws error when a new room is created with no id", function() {
     const useCase = createUseCase();
+
     expect(() => useCase.execute()).to.throw(InvalidIdError);
   });
 
   it("throws error when a new room is created with id as empty string", function() {
     const useCase = createUseCase();
+    
     expect(() => useCase.execute({ id: "" })).to.throw(InvalidIdError);
   });
 
