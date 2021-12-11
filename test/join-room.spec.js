@@ -1,7 +1,7 @@
+const Room = require("../lib/entities/room");
+const JoinRoom = require("../lib/usecase/join-room");
 const RoomRepository = require("../lib/repositories/room.repository");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
-const Room = require("../lib/entities/room");
-const Voter = require("../lib/entities/voter");
 const RoomNotFoundError = require("../lib/errors/room-not-found");
 
 const { expect } = require("chai");
@@ -45,17 +45,3 @@ describe("Join Room", function() {
     return new JoinRoom(roomRepository, eventBroadcaster);
   }
 });
-
-class JoinRoom {
-  constructor(roomRepository, eventBroadcaster) {
-    this.roomRepository = roomRepository;
-    this.eventBroadcaster = eventBroadcaster;
-  }
-
-  execute({ roomId, voterId }) {
-    const room = this.roomRepository.findById(roomId);
-    if (!room) throw new RoomNotFoundError();
-    room.addVoter(new Voter(voterId));
-    this.eventBroadcaster.broadcastNewJoinerToRoom(room);
-  }
-}
