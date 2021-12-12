@@ -5,6 +5,7 @@ const InvalidArgumentError = require("../lib/errors/invalid-argument");
 const RoomAlreadyExistsError = require("../lib/errors/room-already-exists");
 const RoomRepository = require("../lib/repositories/room.repository");
 const Room = require("../lib/entities/room");
+const Packs = require("../lib/entities/packs");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const StubConnection = require("./stubs/stub-connection");
@@ -60,6 +61,15 @@ describe("Create Room", function() {
     roomRepository.save(new Room(input.roomId));
 
     expect(() => useCase.execute(input)).to.throw(RoomAlreadyExistsError);
+  });
+
+  it("A room is created with fobnacci pack", function() {
+    const useCase = createUseCase();
+    const input = createUseCaseInput();
+
+    const room = useCase.execute(input);
+
+    expect(room.pack).to.equal(Packs.fibonacci);
   });
 
   function createUseCase() {
