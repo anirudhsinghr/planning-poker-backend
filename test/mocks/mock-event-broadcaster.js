@@ -3,8 +3,8 @@ class MockEventBroadcaster {
     this.calls = { 'add-participant': [] };
   }
 
-  addParticipant(participantInfo) {
-    this.calls['add-participant'].push(participantInfo);
+  addParticipant(room, voter) {
+    this.calls['add-participant'].push({room, voter});
   }
 
   broadcastAddParticipantCalledOnce() {
@@ -14,9 +14,8 @@ class MockEventBroadcaster {
   addedParticipantsToCorrectRoom(participantInfo) {
     const params = this.calls['add-participant'][0];
 
-    return participantInfo.userId == params.userId &&
-    participantInfo.roomId == params.roomId &&
-    participantInfo.connection == params.connection;
+    return participantInfo.roomId == params.room.id &&
+    participantInfo.voterId == params.voter.id;
   }
 }
 

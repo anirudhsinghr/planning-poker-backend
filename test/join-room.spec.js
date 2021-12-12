@@ -48,6 +48,6 @@ describe("Join Room", function() {
   }
 
   function createUseCaseInput(overrides) {
-    return { roomId: "new-room-id", userId: "new-user-id", connection: new StubConnection(), ...overrides }
+    return { roomId: "new-room-id", voterId: "new-voter-id", connection: new StubConnection(), ...overrides }
   }
 });
