@@ -32,15 +32,15 @@ describe("Create Room", function() {
   it("a new room is created with a single user", function() {
     const useCase = createUseCase();
     const input = createUseCaseInput();
-    
+
     useCase.execute(input);
-    
+
     expect(eventBroadcaster.addedParticipantsToCorrectRoom(input)).to.be.true;
   });
 
   it("throws error when a new room is created with invalid data", function() {
     const useCase = createUseCase();
-    
+
     expect(
       () => useCase.execute(createUseCaseInput({roomId: null}))
     ).to.throw(InvalidArgumentError);
@@ -57,7 +57,7 @@ describe("Create Room", function() {
   it("throws error when a new room is created with a non-unique id", function() {
     const useCase = createUseCase();
     const input = createUseCaseInput();
-    roomRepository.save(new Room(input.roomId)); 
+    roomRepository.save(new Room(input.roomId));
 
     expect(() => useCase.execute(input)).to.throw(RoomAlreadyExistsError);
   });
@@ -70,5 +70,3 @@ describe("Create Room", function() {
     return { roomId: "new-room-id", voterId: "new-voter-id", connection: new StubConnection(), ...overrides }
   }
 });
-
-
