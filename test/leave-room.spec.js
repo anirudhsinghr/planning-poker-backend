@@ -5,6 +5,7 @@ const RoomRepository = require("../lib/repositories/room.repository");
 const RoomNotFoundError = require("../lib/errors/room-not-found");
 const LeaveRoom = require("../lib/usecase/leave-room");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
+const StubConnection = require("./stubs/stub-connection");
 
 describe("Leave Room", function() {
   let roomRepository = null;
@@ -38,7 +39,7 @@ describe("Leave Room", function() {
 
   function createRoomWithVoterIds(votersIds = ["1"]) {
     const room = new Room("new-room-id");
-    votersIds.forEach((id) => room.addVoter(new Voter(id)));
+    votersIds.forEach((id) => room.addVoter(new Voter(id, new StubConnection())));
     roomRepository.save(room);
     return room;
   }
