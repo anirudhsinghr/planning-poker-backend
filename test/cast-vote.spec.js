@@ -5,6 +5,7 @@ const StubConnection = require("./stubs/stub-connection");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const RoomRepository = require("../lib/repositories/room.repository");
 const VoterRepository = require("../lib/repositories/voter.repository");
+const CastVote = require("../lib/usecase/cast-vote");
 
 describe("Cast Vote", function() {
   let roomRepository = null;
@@ -44,18 +45,3 @@ describe("Cast Vote", function() {
     return voter;
   }
 });
-
-class CastVote {
-  constructor({ roomRepository, voterRepository, eventBroadcaster }) {
-    this.roomRepository = roomRepository;
-    this.voterRepository = voterRepository;
-    this.eventBroadcaster = eventBroadcaster;
-  }
-
-  execute({ roomId, voterId, vote }) {
-    const room = this.roomRepository.findById(roomId);
-    const voter = this.voterRepository.findById(voterId);
-    voter.castVote(vote);
-    this.eventBroadcaster.broadcastVoteCasted(room);
-  }
-}
