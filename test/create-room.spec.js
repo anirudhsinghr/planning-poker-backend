@@ -4,6 +4,7 @@ const CreateRoom = require("../lib/usecase/create-room");
 const InvalidArgumentError = require("../lib/errors/invalid-argument");
 const RoomAlreadyExistsError = require("../lib/errors/room-already-exists");
 const RoomRepository = require("../lib/repositories/room.repository");
+const VoterRepository = require("../lib/repositories/voter.repository");
 const Room = require("../lib/entities/room");
 const Packs = require("../lib/entities/packs");
 
@@ -13,10 +14,12 @@ const StubConnection = require("./stubs/stub-connection");
 describe("Create Room", function() {
 
   let roomRepository = null;
+  let voterRepository = null;
   let eventBroadcaster = null;
 
   beforeEach(function() {
     roomRepository = new RoomRepository();
+    voterRepository = new VoterRepository();
     eventBroadcaster = new MockEventBroadcaster();
   });
 
@@ -37,6 +40,8 @@ describe("Create Room", function() {
     useCase.execute(input);
 
     expect(eventBroadcaster.addedParticipantsToCorrectRoom(input)).to.be.true;
+    expect(roomRepository.findById(input.roomId)).not.to.be.null;
+    expect(voterRepository.findById(input.voterId)).not.be.undefined;
   });
 
   it("throws error when a new room is created with invalid data", function() {
@@ -73,7 +78,7 @@ describe("Create Room", function() {
   });
 
   function createUseCase() {
-    return new CreateRoom({roomRepository, eventBroadcaster});
+    return new CreateRoom({roomRepository, voterRepository, eventBroadcaster});
   }
 
   function createUseCaseInput(overrides) {

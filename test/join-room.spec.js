@@ -6,14 +6,17 @@ const StubConnection = require("./stubs/stub-connection");
 const RoomNotFoundError = require("../lib/errors/room-not-found");
 
 const { expect } = require("chai");
+const VoterRepository = require("../lib/repositories/voter.repository");
 
 describe("Join Room", function() {
 
   let roomRepository = null;
+  let voterRepository = null;
   let eventBroadcaster = null;
 
   beforeEach(function() {
     roomRepository = new RoomRepository();
+    voterRepository = new VoterRepository();
     eventBroadcaster = new MockEventBroadcaster();
   });
 
@@ -24,6 +27,7 @@ describe("Join Room", function() {
     
     useCase.execute(input);
 
+    expect(voterRepository.findById(input.voterId)).to.not.undefined;
     expect(eventBroadcaster.broadcastAddParticipantCalledOnce()).to.be.true;
     expect(eventBroadcaster.addedParticipantsToCorrectRoom(input)).to.be.true;
     expect(room.voterCount()).to.equal(1);
@@ -44,7 +48,7 @@ describe("Join Room", function() {
   }
 
   function createUsecase() {
-    return new JoinRoom(roomRepository, eventBroadcaster);
+    return new JoinRoom({roomRepository, voterRepository, eventBroadcaster});
   }
 
   function createUseCaseInput(overrides) {

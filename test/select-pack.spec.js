@@ -24,6 +24,8 @@ describe("Select Pack", function() {
     useCase.execute({ roomId: room.id, packName: "sequential" });
 
     expect(room.pack).to.equal(Packs.sequential);
+    expect(eventBroadcaster.broadCastPackChangeToHaveBeenCalledOnce()).to.be.true;
+    expect(eventBroadcaster.broadCastPackChangeToHaveBeenCalledWith({ room, pack: Packs.sequential })).to.be.true;
   });
 
   it("If room does not exist and raises and error", function() {
