@@ -31,6 +31,7 @@ describe("Cast Vote", function() {
     
     expect(voter.vote).to.equal(vote);
     expect(eventBroadcaster.boradcastVoteCastedToHaveBeenCalledOnce()).to.be.true;
+    expect(eventBroadcaster.boradcastVoteCastedToHaveBeenCalledWith({ room, voterId, vote })).to.be.true;
   });
 
   function createRoom(roomId) {
