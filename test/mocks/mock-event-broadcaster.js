@@ -1,6 +1,6 @@
 class MockEventBroadcaster {
   constructor() {
-    this.calls = { 'add-participant': [], 'voter-left': [], 'pack-changed': [], 'vote-casted': [] };
+    this.calls = { 'add-participant': [], 'voter-left': [], 'pack-changed': [], 'vote-casted': [], 'vote-uncasted': [] };
   }
 
   addParticipant(room, voter) {
@@ -15,8 +15,12 @@ class MockEventBroadcaster {
     this.calls['pack-changed'].push({ room, pack });
   }
 
-  broadcastVoteCasted(room) {
-    this.calls['vote-casted'].push({room})
+  broadcastVoteCasted({ room, voterId, vote }) {
+    this.calls['vote-casted'].push({room, voterId, vote})
+  }
+
+  broadcastUncastVote({ room, voterId }) {
+    this.calls['vote-uncasted'].push({ room, voterId })
   }
 
   broadcastAddParticipantCalledOnce() {
@@ -50,6 +54,17 @@ class MockEventBroadcaster {
 
   boradcastVoteCastedToHaveBeenCalledOnce() {
     return this.calls['vote-casted'].length == 1;
+  }
+  
+  boradcastVoteCastedToHaveBeenCalledWith({ room, voterId, vote }) {
+    const params = this.calls['vote-casted'][0];
+    return room == params.room &&
+      voterId == params.voterId &&
+      vote == params.vote;
+  }
+
+  broadcastUncastVoteWasCalledOnced() {
+    return this.calls['vote-uncasted'].length == 1;
   }
 }
 
