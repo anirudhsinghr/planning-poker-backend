@@ -1,6 +1,6 @@
 class MockEventBroadcaster {
   constructor() {
-    this.calls = { 'add-participant': [], 'voter-left': [], 'pack-changed': [] };
+    this.calls = { 'add-participant': [], 'voter-left': [], 'pack-changed': [], 'vote-casted': [] };
   }
 
   addParticipant(room, voter) {
@@ -13,6 +13,10 @@ class MockEventBroadcaster {
 
   broadcastPackChanged({ room, pack }) {
     this.calls['pack-changed'].push({ room, pack });
+  }
+
+  broadcastVoteCasted(room) {
+    this.calls['vote-casted'].push({room})
   }
 
   broadcastAddParticipantCalledOnce() {
@@ -42,6 +46,10 @@ class MockEventBroadcaster {
   broadCastPackChangeToHaveBeenCalledWith({ room, pack }) {
     const params = this.calls['pack-changed'][0];
     return params.room == room && params.pack == pack;
+  }
+
+  boradcastVoteCastedToHaveBeenCalledOnce() {
+    return this.calls['vote-casted'].length == 1;
   }
 }
 
