@@ -1,6 +1,13 @@
 class MockEventBroadcaster {
   constructor() {
-    this.calls = { 'add-participant': [], 'voter-left': [], 'pack-changed': [], 'vote-casted': [], 'vote-uncasted': [] };
+    this.calls = { 
+      'reveal': [],
+      'voter-left': [],
+      'vote-casted': [],
+      'pack-changed': [],
+      'vote-uncasted': [],
+      'add-participant': []
+    };
   }
 
   addParticipant(room, voter) {
@@ -21,6 +28,10 @@ class MockEventBroadcaster {
 
   broadcastUncastVote({ room, voterId }) {
     this.calls['vote-uncasted'].push({ room, voterId })
+  }
+
+  broadcastReveal({ room }) {
+    this.calls['reveal'].push({ room });
   }
 
   broadcastAddParticipantCalledOnce() {
@@ -65,6 +76,15 @@ class MockEventBroadcaster {
 
   broadcastUncastVoteWasCalledOnced() {
     return this.calls['vote-uncasted'].length == 1;
+  }
+  
+  broadcastRevealWasCalledOnce() {
+    return this.calls['reveal'].length == 1;
+  }
+
+  broadcastRevealWasCalledWith({ room }) {
+    const params = this.calls['reveal'][0];
+    return room == params.room;
   }
 }
 
