@@ -22,41 +22,55 @@ describe("Reset Votes", function() {
 
   it("An admin can reset all votes in the room", function() {
     const useCase = new ResetVotes({ roomRepository, voterRepository, eventBroadcaster });
-    const v1 = new Admin("1", 'new-room-id', new StubConnection());
-    const v2 = new Voter("2", 'new-room-id', new StubConnection()); 
-    const v3 = new Voter("3", 'new-room-id', new StubConnection());
-    const room = createRoomWithVoters({ roomId: 'new-room-id', voters: [v1, v2, v3] })
-    v1.castVote("1");
-    v2.castVote("1");
-    v3.castVote("1");
+    let room = createRoom({ roomId: 'new-room-id' });
+    room = addVotersToRoom({ room, data: [{ voterId: "2", vote: "2" }, {voterId: "3", vote: "3"}] });
+    room = addAdminToRoom({ room, adminId: "1", vote: "1" });
 
-    useCase.execute({ roomId: room.id, voterId: v1.id });
+    expect(room.votes()).to.have.all.members(["1", "2", "3"]);
 
-    expect(room.votes()).to.deep.equal([null, null, null]);
+    useCase.execute({ roomId: room.id, voterId: "1"});
+
+    expect(room.votes()).to.have.all.members([null, null, null]);
+    expect(eventBroadcaster.broadcastResetVotesCalledOnce()).to.be.true;
+    expect(eventBroadcaster.broadcastResetVotesCalledWith({ room })).to.be.true;
   });
 
   it("non admin canot reset all votes in the room", function() {
     const useCase = new ResetVotes({ roomRepository, voterRepository, eventBroadcaster });
-    const v1 = new Voter("1", 'new-room-id', new StubConnection());
-    const v2 = new Voter("2", 'new-room-id', new StubConnection()); 
-    const v3 = new Voter("3", 'new-room-id', new StubConnection());
-    const room = createRoomWithVoters({ roomId: 'new-room-id', voters: [v1, v2, v3] })
-    v1.castVote("1");
-    v2.castVote("1");
-    v3.castVote("1");
+    let room = createRoom({ roomId: 'new-room-id' });
+    room = addVotersToRoom({ room, data: [{ voterId: "2", vote: "2" }, {voterId: "3", vote: "3"}] });
+    room = addAdminToRoom({ room, adminId: "1", vote: "1" });
 
-    expect(() => useCase.execute({ roomId: room.id, voterId: v1.id }))
+    expect(() => useCase.execute({ roomId: room.id, voterId: "2" }))
       .to.throw(UserNotAdminError);
-
   });
 
+  function createRoom({ roomId }) {
+    const room = new Room(roomId);
+    roomRepository.save(room);
+    return room;
+  }
+
+  function addVotersToRoom({ room, data }) {
+    data.forEach(({ voterId, vote }) => {
+      const voter = new Voter(voterId, room.id, new StubConnection());
+      voter.castVote(vote);
+      voterRepository.save(voter);
+      room.addVoter(voter);
+    });
+    return room;
+  }
+
+  function addAdminToRoom({ room, adminId, vote }) {
+    const admin = new Admin(adminId, room.id, new StubConnection());
+    admin.castVote(vote);
+    voterRepository.save(admin);
+    room.addVoter(admin);
+    return room;
+  }
 
   function createRoomWithVoters({ roomId, voters }) {
     const room = new Room(roomId);
-    voters.forEach(v => {
-      voterRepository.save(v);
-      room.addVoter(v)
-    });
     roomRepository.save(room);
     return room;
   }
@@ -74,5 +88,6 @@ class ResetVotes {
     const voter = this.voterRepository.findById(voterId);
     if (!voter.isAdminOf(roomId)) throw new UserNotAdminError();
     room.resetVotes();
+    this.eventBroadcaster.broadcastResetVotes({room});
   }
 }
