@@ -50,7 +50,7 @@ describe("Leave Room", function() {
 
   function createVotersForRoom(room, voterIds) {
     voterIds.forEach((id) => {
-      const voter = new Voter(id, new StubConnection());
+      const voter = new Voter(id, room.id, new StubConnection());
       room.addVoter(voter)
       voterRepository.save(voter);
     });

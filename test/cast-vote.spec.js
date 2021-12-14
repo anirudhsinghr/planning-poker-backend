@@ -23,7 +23,7 @@ describe("Cast Vote", function() {
     const roomId = "new-room-id";
     const voterId = "new-voter-id";
     const room = createRoom(roomId);
-    const voter = createVoter(voterId);
+    const voter = createVoter(voterId, roomId);
     room.addVoter(voterId);
     const useCase = new CastVote({roomRepository, voterRepository, eventBroadcaster});
     
@@ -40,8 +40,8 @@ describe("Cast Vote", function() {
     return room;
   }
   
-  function createVoter(voterId) {
-    const voter = new Voter(voterId, new StubConnection());
+  function createVoter(voterId, roomId) {
+    const voter = new Voter(voterId, roomId, new StubConnection());
     voterRepository.save(voter);
     return voter;
   }

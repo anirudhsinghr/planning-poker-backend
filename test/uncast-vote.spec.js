@@ -23,7 +23,7 @@ describe("Uncast Vote", function() {
 
   it("a use can uncast a vote", function() {
     const room = createRoom("new-room-id");
-    const voter = createVoter("new-voter-id");
+    const voter = createVoter("new-voter-id", room.id);
     room.addVoter(voter);
     voter.castVote("1");
     const useCase = new UncastVote({ roomRepository, voterRepository, eventBroadcaster });
@@ -59,8 +59,8 @@ describe("Uncast Vote", function() {
     return room;
   }
 
-  function createVoter(id) {
-    const voter = new Voter("new-voter-id", new StubConnection());
+  function createVoter(id, roomId) {
+    const voter = new Voter("new-voter-id", roomId, new StubConnection());
     voterRepository.save(voter);
     return voter;
   }

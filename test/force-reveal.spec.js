@@ -30,7 +30,7 @@ describe("Force Reveal", function() {
     const useCase = createUseCase();
     
     const room = createRoom();
-    const voter = createAdminVoter();
+    const voter = createAdminVoter(room.id);
 
     room.addVoter(voter);
 
@@ -43,7 +43,7 @@ describe("Force Reveal", function() {
     const useCase = createUseCase();
     
     const room = createRoom();
-    const voter = createVoter();
+    const voter = createVoter(room.id);
 
     room.addVoter(voter);
 
@@ -55,7 +55,7 @@ describe("Force Reveal", function() {
     const useCase = createUseCase();
 
     const room = createRoom();
-    const voter = createAdminVoter();
+    const voter = createAdminVoter(room.id);
 
     room.addVoter(voter);
 
@@ -70,7 +70,7 @@ describe("Force Reveal", function() {
     const useCase = createUseCase();
 
     const room = createRoom();
-    const voter = createAdminVoter();
+    const voter = createAdminVoter(room.id);
 
     expect(() => useCase.execute({ roomId: room.id, voterId: voter.id }))
       .to.throw(UserNotAdminError);
@@ -86,14 +86,14 @@ describe("Force Reveal", function() {
     return room;
   }
 
-  function createAdminVoter() {
-    const voter = new Voter("new-admin-id", new StubConnection(), true);
+  function createAdminVoter(roomId) {
+    const voter = new Voter("new-admin-id", roomId, new StubConnection(), true);
     voterRepository.save(voter);
     return voter;
   }
 
-  function createVoter() {
-    const voter = new Voter("new-admin-id", new StubConnection());
+  function createVoter(roomId) {
+    const voter = new Voter("new-voter-id", roomId, new StubConnection());
     voterRepository.save(voter);
     return voter;
   }
