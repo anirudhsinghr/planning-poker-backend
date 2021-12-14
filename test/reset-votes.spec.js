@@ -1,12 +1,19 @@
 const expect = require("chai").expect;
+
 const Room = require("../lib/entities/room");
 const Voter = require("../lib/entities/voter");
 const Admin = require("../lib/entities/admin");
+
 const RoomRepository = require("../lib/repositories/room.repository");
 const VoterRepository = require("../lib/repositories/voter.repository");
-const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
+
 const StubConnection = require("./stubs/stub-connection");
+const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
+
+const ResetVotes = require("../lib/usecase/reset-votes");
 const UserNotAdminError = require("../lib/errors/user-not-admin");
+const RoomNotFoundError = require("../lib/errors/room-not-found");
+const VoterNotFoundError = require("../lib/errors/voter-not-found");
 
 describe("Reset Votes", function() {
 
@@ -45,6 +52,21 @@ describe("Reset Votes", function() {
       .to.throw(UserNotAdminError);
   });
 
+  it("if room is not found it throws and error", function() {
+    const useCase = new ResetVotes({ roomRepository, voterRepository, eventBroadcaster });
+
+    expect(() => useCase.execute({ roomId: "invalid-id", voterId: "2" }))
+      .to.throw(RoomNotFoundError);
+  });
+
+  it("if voter is not found it throws and error", function() {
+    const useCase = new ResetVotes({ roomRepository, voterRepository, eventBroadcaster });
+    let room = createRoom({ roomId: 'new-room-id' });
+
+    expect(() => useCase.execute({ roomId: room.id, voterId: "2" }))
+      .to.throw(VoterNotFoundError);
+  });
+
   function createRoom({ roomId }) {
     const room = new Room(roomId);
     roomRepository.save(room);
@@ -68,26 +90,4 @@ describe("Reset Votes", function() {
     room.addVoter(admin);
     return room;
   }
-
-  function createRoomWithVoters({ roomId, voters }) {
-    const room = new Room(roomId);
-    roomRepository.save(room);
-    return room;
-  }
 });
-
-class ResetVotes {
-  constructor({ roomRepository, voterRepository, eventBroadcaster }) {
-    this.roomRepository = roomRepository;
-    this.voterRepository = voterRepository;
-    this.eventBroadcaster = eventBroadcaster;
-  }
-
-  execute({ roomId, voterId }) {
-    const room = this.roomRepository.findById(roomId);
-    const voter = this.voterRepository.findById(voterId);
-    if (!voter.isAdminOf(roomId)) throw new UserNotAdminError();
-    room.resetVotes();
-    this.eventBroadcaster.broadcastResetVotes({room});
-  }
-}
