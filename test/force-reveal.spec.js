@@ -14,6 +14,7 @@ const VoterNotFoundError = require("../lib/errors/voter-not-found");
 const UserNotAdminError = require("../lib/errors/user-not-admin");
 
 const ForceReveal = require("../lib/usecase/force-reveal");
+const Admin = require("../lib/entities/admin");
 
 describe("Force Reveal", function() {
   let roomRepository = null;
@@ -87,9 +88,9 @@ describe("Force Reveal", function() {
   }
 
   function createAdminVoter(roomId) {
-    const voter = new Voter("new-admin-id", roomId, new StubConnection(), true);
-    voterRepository.save(voter);
-    return voter;
+    const admin = new Admin("new-admin-id", roomId, new StubConnection());
+    voterRepository.save(admin);
+    return admin;
   }
 
   function createVoter(roomId) {

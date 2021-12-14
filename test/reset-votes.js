@@ -1,6 +1,7 @@
 const expect = require("chai").expect;
 const Room = require("../lib/entities/room");
 const Voter = require("../lib/entities/voter");
+const Admin = require("../lib/entities/admin");
 const RoomRepository = require("../lib/repositories/room.repository");
 const VoterRepository = require("../lib/repositories/voter.repository");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
@@ -21,7 +22,7 @@ describe("Reset Votes", function() {
 
   it("An admin can reset all votes in the room", function() {
     const useCase = new ResetVotes({ roomRepository, voterRepository, eventBroadcaster });
-    const v1 = new Voter("1", 'new-room-id', new StubConnection(), true);
+    const v1 = new Admin("1", 'new-room-id', new StubConnection());
     const v2 = new Voter("2", 'new-room-id', new StubConnection()); 
     const v3 = new Voter("3", 'new-room-id', new StubConnection());
     const room = createRoomWithVoters({ roomId: 'new-room-id', voters: [v1, v2, v3] })
