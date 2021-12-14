@@ -4,6 +4,7 @@ class MockEventBroadcaster {
       'reveal': [],
       'voter-left': [],
       'vote-casted': [],
+      'reset-votes': [],
       'pack-changed': [],
       'vote-uncasted': [],
       'add-participant': []
@@ -32,6 +33,10 @@ class MockEventBroadcaster {
 
   broadcastReveal({ room }) {
     this.calls['reveal'].push({ room });
+  }
+  
+  broadcastResetVotes({ room }) {
+    this.calls['reset-votes'].push({ room });
   }
 
   broadcastAddParticipantCalledOnce() {
@@ -67,23 +72,39 @@ class MockEventBroadcaster {
     return this.calls['vote-casted'].length == 1;
   }
   
+  
   boradcastVoteCastedToHaveBeenCalledWith({ room, voterId, vote }) {
     const params = this.calls['vote-casted'][0];
     return room == params.room &&
-      voterId == params.voterId &&
-      vote == params.vote;
+    voterId == params.voterId &&
+    vote == params.vote;
   }
-
+  
   broadcastUncastVoteWasCalledOnced() {
     return this.calls['vote-uncasted'].length == 1;
+  }
+
+  broadcastUncastVoteWasCalledWith({ room, voterId }) {
+    const params = this.calls['vote-uncasted'][0];
+    return room == params.room &&
+    voterId == params.voterId;
   }
   
   broadcastRevealWasCalledOnce() {
     return this.calls['reveal'].length == 1;
   }
-
+  
   broadcastRevealWasCalledWith({ room }) {
     const params = this.calls['reveal'][0];
+    return room == params.room;
+  }
+  
+  broadcastResetVotesCalledOnce() {
+    return this.calls['reset-votes'].length == 1;
+  }
+
+  broadcastResetVotesCalledWith({ room }) {
+    const params = this.calls['reset-votes'][0];
     return room == params.room;
   }
 }

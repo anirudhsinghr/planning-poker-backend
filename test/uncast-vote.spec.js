@@ -34,6 +34,7 @@ describe("Uncast Vote", function() {
     
     expect(voterRepository.findById(voter.id).vote).to.be.null;
     expect(eventBroadcaster.broadcastUncastVoteWasCalledOnced()).to.be.true;
+    expect(eventBroadcaster.broadcastUncastVoteWasCalledWith({ room, voterId: voter.id })).to.be.true;
   });
 
   it("if a voter is not found then error is thrown", function() {
