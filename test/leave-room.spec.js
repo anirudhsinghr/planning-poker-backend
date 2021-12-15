@@ -42,6 +42,16 @@ describe("Leave Room", function() {
     ).throws(RoomNotFoundError);
   });
 
+  it("Room is deleted with voters when last voter leaves", function() {
+    const room = createRoomWithVoterIds(["1"]);
+    const userCase = createUseCase();
+    const input = { roomId: room.id, voterId: "1" }
+    userCase.execute(input);
+    
+    expect(roomRepository.findById(room.id)).to.be.undefined;
+    expect(voterRepository.findById("1")).to.be.undefined;
+  });
+
   function createRoomWithVoterIds(votersIds = ["1"]) {
     const room = createVotersForRoom(new Room("new-room-id"), votersIds);
     roomRepository.save(room);
