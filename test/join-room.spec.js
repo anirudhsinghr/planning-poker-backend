@@ -1,4 +1,6 @@
 const Room = require("../lib/entities/room");
+const Voter = require("../lib/entities/voter");
+const Admin = require("../lib/entities/admin");
 const JoinRoom = require("../lib/usecase/join-room");
 const RoomRepository = require("../lib/repositories/room.repository");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
@@ -41,10 +43,32 @@ describe("Join Room", function() {
     ).to.throw(RoomNotFoundError);
   });
 
+  it("Admins can join the same room again", function() {
+    const room = createRoom("room-id");
+    const admin = createAdmin({ roomId: room.id, adminId: "admin-id" });
+    const useCase = new createUsecase();
+    const input = createUseCaseInput({ roomId: room.id, voterId: admin.id });
+    
+    room.addVoter(admin);
+    expect(room.admin()).to.equal(admin);
+    
+    room.removeVoter(admin.id);
+    expect(room.admin()).to.equal(undefined);
+    
+    useCase.execute(input)
+    expect(room.admin()).to.equal(admin);
+  });
+
   function createRoom(id) {
     const room = new Room(id);
     roomRepository.save(room);
     return room;
+  }
+
+  function createAdmin({ roomId, adminId }) {
+    const admin = new Admin(adminId, roomId, new StubConnection());
+    voterRepository.save(admin);
+    return admin;
   }
 
   function createUsecase() {
