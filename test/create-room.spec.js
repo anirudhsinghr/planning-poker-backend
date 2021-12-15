@@ -27,10 +27,21 @@ describe("Create Room", function() {
     const useCase = createUseCase();
     const input = createUseCaseInput();
 
-    const room = useCase.execute(input);
+    const { roomId } = useCase.execute(input);
 
-    expect(room).to.not.be.null;
-    expect(roomRepository.findById(input.roomId)).to.equal(room);
+    expect(roomId).to.not.be.null;
+    expect(roomRepository.findById(roomId).id).to.equal(input.roomId);
+  });
+
+  it("a new room is created with an admin", function() {
+    const useCase = createUseCase();
+    const input = createUseCaseInput();
+
+    const { roomId } = useCase.execute(input);
+    const room = roomRepository.findById(roomId);
+
+    expect(room.admin()).to.not.be.undefined;
+    expect(room.admin().id).to.equal(input.voterId);
   });
 
   it("a new room is created with a single user", function() {
@@ -72,7 +83,8 @@ describe("Create Room", function() {
     const useCase = createUseCase();
     const input = createUseCaseInput();
 
-    const room = useCase.execute(input);
+    const { roomId}  = useCase.execute(input);
+    const room = roomRepository.findById(roomId)
 
     expect(room.pack).to.equal(Packs.fibonacci);
   });
