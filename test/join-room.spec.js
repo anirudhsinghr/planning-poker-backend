@@ -59,6 +59,22 @@ describe("Join Room", function() {
     expect(room.admin()).to.equal(admin);
   });
 
+  it("Voters can join the same room again", function() {
+    const room = createRoom("room-id");
+    const voter = createVoter({ roomId: room.id, voterId: "voter-id" });
+    const useCase = new createUsecase();
+    const input = createUseCaseInput({ roomId: room.id, voterId: voter.id });
+    
+    room.addVoter(voter);
+    expect(room.voters).to.contain(voter);
+    
+    room.removeVoter(voter.id);
+    expect(room.voters).to.not.contain(voter);
+    
+    useCase.execute(input)
+    expect(room.voters).to.contain(voter);
+  });
+
   function createRoom(id) {
     const room = new Room(id);
     roomRepository.save(room);
@@ -69,6 +85,12 @@ describe("Join Room", function() {
     const admin = new Admin(adminId, roomId, new StubConnection());
     voterRepository.save(admin);
     return admin;
+  }
+
+  function createVoter({ roomId, voterId }) {
+    const voter = new Voter(voterId, roomId, new StubConnection());
+    voterRepository.save(voter);
+    return voter;
   }
 
   function createUsecase() {
