@@ -49,12 +49,6 @@ describe("Join Room", function() {
     const useCase = new createUsecase();
     const input = createUseCaseInput({ roomId: room.id, voterId: admin.id });
     
-    room.addVoter(admin);
-    expect(room.admin()).to.equal(admin);
-    
-    room.removeVoter(admin.id);
-    expect(room.admin()).to.equal(undefined);
-    
     useCase.execute(input)
     expect(room.admin()).to.equal(admin);
   });
@@ -64,12 +58,6 @@ describe("Join Room", function() {
     const voter = createVoter({ roomId: room.id, voterId: "voter-id" });
     const useCase = new createUsecase();
     const input = createUseCaseInput({ roomId: room.id, voterId: voter.id });
-    
-    room.addVoter(voter);
-    expect(room.voters).to.contain(voter);
-    
-    room.removeVoter(voter.id);
-    expect(room.voters).to.not.contain(voter);
     
     useCase.execute(input)
     expect(room.voters).to.contain(voter);
