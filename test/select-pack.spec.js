@@ -1,14 +1,10 @@
 const { expect } = require("chai");
 
-const Room = require("../lib/entities/room");
-const Admin = require("../lib/entities/admin");
-const Voter = require("../lib/entities/voter");
 const Packs = require("../lib/entities/packs");
 
 const RoomRepository = require("../lib/repositories/room.repository");
 const VoterRepository = require("../lib/repositories/voter.repository");
 
-const StubConnection = require("./stubs/stub-connection");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 
 const RoomNotFoundError = require("../lib/errors/room-not-found");
@@ -16,6 +12,8 @@ const UserNotAdminError = require("../lib/errors/user-not-admin");
 const VoterNotFoundError = require("../lib/errors/voter-not-found");
 
 const SelectPack = require("../lib/usecase/select-pack");
+
+const { createRoom, createVoterForRoom, createAdminForRoom } = require("./fixtures");
 
 describe("Select Pack", function() {
   let roomRepository = null;
@@ -28,9 +26,8 @@ describe("Select Pack", function() {
   });
 
   it("After creation a rooms pack can be changed by admin", function() {
-    const room = createRoom("new-room-id");
-    const admin = createAdmin({ roomId: room.id, adminId: "new-admin-id" });
-    room.addVoter(admin);
+    const room = createRoom({roomId: "new-room-id", roomRepository});
+    const admin = createAdminForRoom({ room, adminId: "new-admin-id", voterRepository });
 
     const useCase = createUseCase();
 
@@ -44,9 +41,8 @@ describe("Select Pack", function() {
   });
 
   it("After creation a rooms pack cannot be changed by non-admin voter", function() {
-    const room = createRoom("new-room-id");
-    const voter = createVoter({ roomId: room.id, voterId: "new-voter-id" });
-    room.addVoter(voter);
+    const room = createRoom({roomId: "new-room-id", roomRepository});
+    const voter = createVoterForRoom({ room, voterId: "new-voter-id", voterRepository });
     
     const useCase = createUseCase();
 
@@ -58,16 +54,15 @@ describe("Select Pack", function() {
 
   it("If room does not exist and raises an error", function() {
     const roomId = "new-room-id";
-    const voter = createVoter({ roomId: "random-id", voterId: "random-id" });
     const useCase = createUseCase();
     
     expect(
-      () => useCase.execute({ roomId: roomId, voterId: voter.id, packName: "sequential" })
+      () => useCase.execute({ roomId: roomId, voterId: "random-id", packName: "sequential" })
     ).to.throw(RoomNotFoundError);
   });
 
   it("If voter does not exist and raises an error", function() {
-    const room = createRoom("new-room-id");
+    const room = createRoom({roomId: "new-room-id", roomRepository});
     const useCase = createUseCase();
     
     expect(
@@ -78,7 +73,7 @@ describe("Select Pack", function() {
   });
 
   it("If pack does not exist then the pack remains the same", function() {
-    const room = createRoom("new-room-id");
+    const room = createRoom({roomId: "new-room-id", roomRepository});
     const useCase = createUseCase();
     
     expect(room.pack).to.equal(Packs.fibonacci);
@@ -87,24 +82,6 @@ describe("Select Pack", function() {
     
     expect(room.pack).to.equal(Packs.fibonacci);
   });
-
-  function createRoom(id) {
-    const room = new Room(id);
-    roomRepository.save(room);
-    return room;
-  }
-
-  function createAdmin({roomId, adminId}) {
-    const admin = new Admin(adminId, roomId, new StubConnection());
-    voterRepository.save(admin);
-    return admin;
-  }
-
-  function createVoter({roomId, voterId}) {
-    const voter = new Voter(voterId, roomId, new StubConnection());
-    voterRepository.save(voter);
-    return voter;
-  }
 
   function createUseCase() {
     return new SelectPack({ roomRepository, voterRepository, eventBroadcaster });

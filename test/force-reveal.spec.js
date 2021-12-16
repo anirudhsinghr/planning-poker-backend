@@ -75,5 +75,4 @@ describe("Force Reveal", function() {
   function createUseCase() {
     return new ForceReveal({ roomRepository, voterRepository, eventBroadcaster });;
   }
-
 });
