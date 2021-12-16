@@ -1,6 +1,6 @@
 const { expect } = require("chai")
-const { Room } = require("../lib/entities")
-const { InvalidArgumentError } = require("../lib/errors")
+const { Room } = require("../../lib/entities")
+const { InvalidArgumentError } = require("../../lib/errors")
 
 describe("Room", function() {
   it("cannot be created with an invalid id", function() {

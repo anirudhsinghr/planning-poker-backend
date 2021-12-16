@@ -1,8 +1,8 @@
 const expect = require("chai").expect;
 
-const { CastVote } = require("../lib/usecase");
+const { CastVote } = require("../../lib/usecase");
 
-const { RoomRepository, VoterRepository } = require("../lib/repositories");
+const { RoomRepository, VoterRepository } = require("../../lib/repositories");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const { createRoom, createVoterForRoom } = require('./fixtures');

@@ -1,9 +1,9 @@
 const { expect } = require("chai");
 
-const { SelectPack } = require("../lib/usecase");
-const { Packs } = require("../lib/entities");
-const { RoomRepository, VoterRepository } = require("../lib/repositories");
-const { RoomNotFoundError, UserNotAdminError, VoterNotFoundError } = require("../lib/errors");
+const { SelectPack } = require("../../lib/usecase");
+const { Packs } = require("../../lib/entities");
+const { RoomRepository, VoterRepository } = require("../../lib/repositories");
+const { RoomNotFoundError, UserNotAdminError, VoterNotFoundError } = require("../../lib/errors");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const { createRoom, createVoterForRoom, createAdminForRoom } = require("./fixtures");

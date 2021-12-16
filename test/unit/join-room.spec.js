@@ -1,8 +1,8 @@
 const { expect } = require("chai");
 
-const { JoinRoom } = require("../lib/usecase");
-const { RoomRepository, VoterRepository } = require("../lib/repositories");
-const { RoomNotFoundError } = require("../lib/errors");
+const { JoinRoom } = require("../../lib/usecase");
+const { RoomRepository, VoterRepository } = require("../../lib/repositories");
+const { RoomNotFoundError } = require("../../lib/errors");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const StubConnection = require("./stubs/stub-connection");

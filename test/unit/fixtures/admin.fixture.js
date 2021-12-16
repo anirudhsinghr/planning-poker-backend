@@ -1,4 +1,4 @@
-const { Admin } = require("../../lib/entities");
+const { Admin } = require("../../../lib/entities");
 const StubConnection = require("../stubs/stub-connection");
 
 function createAdmin({ adminId, roomId, voterRepository }) {
