@@ -1,11 +1,9 @@
 const expect = require("chai").expect;
-const Voter = require("../lib/entities/voter");
-const Room = require("../lib/entities/room");
-const StubConnection = require("./stubs/stub-connection");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const RoomRepository = require("../lib/repositories/room.repository");
 const VoterRepository = require("../lib/repositories/voter.repository");
 const CastVote = require("../lib/usecase/cast-vote");
+const { createRoom, createVoterForRoom } = require('./fixtures');
 
 describe("Cast Vote", function() {
   let roomRepository = null;
@@ -22,9 +20,8 @@ describe("Cast Vote", function() {
     const vote = "1";
     const roomId = "new-room-id";
     const voterId = "new-voter-id";
-    const room = createRoom(roomId);
-    const voter = createVoter(voterId, roomId);
-    room.addVoter(voterId);
+    const room = createRoom({roomId, roomRepository});
+    const voter = createVoterForRoom({voterId, room, voterRepository});
     const useCase = new CastVote({roomRepository, voterRepository, eventBroadcaster});
     
     useCase.execute({ roomId: roomId, voterId: voterId, vote: vote });
@@ -33,16 +30,4 @@ describe("Cast Vote", function() {
     expect(eventBroadcaster.boradcastVoteCastedToHaveBeenCalledOnce()).to.be.true;
     expect(eventBroadcaster.boradcastVoteCastedToHaveBeenCalledWith({ room, voterId, vote })).to.be.true;
   });
-
-  function createRoom(roomId) {
-    const room = new Room(roomId);
-    roomRepository.save(room);
-    return room;
-  }
-  
-  function createVoter(voterId, roomId) {
-    const voter = new Voter(voterId, roomId, new StubConnection());
-    voterRepository.save(voter);
-    return voter;
-  }
 });
