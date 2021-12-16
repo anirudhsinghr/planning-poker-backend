@@ -90,6 +90,25 @@ describe("Leave Room", function() {
     expect(voterRepository.findById(voter.id)).to.be.undefined;
   });
 
+  it("Empty room gets deleted without affecting other room voters ", function() {
+    const firstRoom = createRoom({ roomId: "first-room-id", roomRepository })
+    const secondRoom = createRoom({ roomId: "second-room-id", roomRepository })
+    const firstRoomVoter = createVoterForRoom({ voterId: "new-voter-id", room: firstRoom, voterRepository });
+    const secondRoomVoter = createVoterForRoom({ voterId: "new-voter-id", room: secondRoom, voterRepository });
+    const input = { roomId: firstRoom.id, voterId: firstRoomVoter.id }
+    const userCase = createUseCase();
+    
+    userCase.execute(input);
+
+    expect(firstRoom.isEmpty()).to.be.true;
+    expect(roomRepository.findById(firstRoom.id)).to.be.undefined;
+    expect(voterRepository.findById(firstRoomVoter.id)).to.be.undefined;
+    
+    expect(secondRoom.isEmpty()).to.be.false;
+    expect(roomRepository.findById(secondRoom.id)).to.not.be.undefined;
+    expect(voterRepository.findById(secondRoomVoter.id)).to.be.undefined;
+  });
+
   function createUseCase() {
     return new LeaveRoom({ roomRepository, voterRepository, eventBroadcaster });
   }
