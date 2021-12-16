@@ -1,4 +1,4 @@
-const Voter = require("../../lib/entities/voter");
+const { Voter } = require("../../lib/entities");
 const StubConnection = require("../stubs/stub-connection");
 
 function createVoter({ voterId, roomId, voterRepository }) {

@@ -1,15 +1,10 @@
 const expect = require("chai").expect;
 
-const RoomRepository = require("../lib/repositories/room.repository");
-const VoterRepository = require("../lib/repositories/voter.repository");
+const { ResetVotes } = require("../lib/usecase");
+const { RoomRepository, VoterRepository } = require("../lib/repositories");
+const { UserNotAdminError, RoomNotFoundError, VoterNotFoundError } = require("../lib/errors/voter-not-found");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
-
-const ResetVotes = require("../lib/usecase/reset-votes");
-const UserNotAdminError = require("../lib/errors/user-not-admin");
-const RoomNotFoundError = require("../lib/errors/room-not-found");
-const VoterNotFoundError = require("../lib/errors/voter-not-found");
-
 const { createRoom, createVoterForRoom, createAdminForRoom } = require("./fixtures");
 
 describe("Reset Votes", function() {

@@ -1,15 +1,14 @@
 const expect = require("chai").expect;
 
-const CreateRoom = require("../lib/usecase/create-room");
-const InvalidArgumentError = require("../lib/errors/invalid-argument");
-const RoomAlreadyExistsError = require("../lib/errors/room-already-exists");
-const RoomRepository = require("../lib/repositories/room.repository");
-const VoterRepository = require("../lib/repositories/voter.repository");
-const Room = require("../lib/entities/room");
-const Packs = require("../lib/entities/packs");
+const { CreateRoom } = require("../lib/usecase");
+const { Packs } = require("../lib/entities");
+const { RoomRepository, VoterRepository } = require("../lib/repositories");
+const { InvalidArgumentError, RoomAlreadyExistsError } = require("../lib/errors");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const StubConnection = require("./stubs/stub-connection");
+
+const { createRoom } = require("./fixtures");
 
 describe("Create Room", function() {
 
@@ -74,7 +73,7 @@ describe("Create Room", function() {
   it("throws error when a new room is created with a non-unique id", function() {
     const useCase = createUseCase();
     const input = createUseCaseInput();
-    roomRepository.save(new Room(input.roomId));
+    createRoom({ roomId: input.roomId, roomRepository });
 
     expect(() => useCase.execute(input)).to.throw(RoomAlreadyExistsError);
   });

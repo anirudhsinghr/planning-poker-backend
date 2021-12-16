@@ -1,4 +1,4 @@
-const Room = require("../../lib/entities/room");
+const { Room } = require("../../lib/entities");
 
 function createRoom({roomId, roomRepository}) {
   const room = new Room(roomId);

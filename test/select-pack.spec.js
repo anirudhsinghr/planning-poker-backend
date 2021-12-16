@@ -1,18 +1,11 @@
 const { expect } = require("chai");
 
-const Packs = require("../lib/entities/packs");
-
-const RoomRepository = require("../lib/repositories/room.repository");
-const VoterRepository = require("../lib/repositories/voter.repository");
+const { SelectPack } = require("../lib/usecase");
+const { Packs } = require("../lib/entities");
+const { RoomRepository, VoterRepository } = require("../lib/repositories");
+const { RoomNotFoundError, UserNotAdminError, VoterNotFoundError } = require("../lib/errors");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
-
-const RoomNotFoundError = require("../lib/errors/room-not-found");
-const UserNotAdminError = require("../lib/errors/user-not-admin");
-const VoterNotFoundError = require("../lib/errors/voter-not-found");
-
-const SelectPack = require("../lib/usecase/select-pack");
-
 const { createRoom, createVoterForRoom, createAdminForRoom } = require("./fixtures");
 
 describe("Select Pack", function() {

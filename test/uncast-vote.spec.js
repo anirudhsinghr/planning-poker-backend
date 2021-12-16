@@ -1,14 +1,10 @@
 const expect = require("chai").expect;
 
-const RoomNotFoundError = require("../lib/errors/room-not-found");
-const VoterNotFoundError = require("../lib/errors/voter-not-found");
-
-const RoomRepository = require("../lib/repositories/room.repository");
-const VoterRepository = require("../lib/repositories/voter.repository");
+const { UncastVote } = require("../lib/usecase");
+const { RoomRepository, VoterRepository } = require("../lib/repositories");
+const { RoomNotFoundError, VoterNotFoundError } = require("../lib/errors");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
-
-const UncastVote = require("../lib/usecase/uncast-vote");
 
 const { createRoom, createVoterForRoom } = require("./fixtures");
 

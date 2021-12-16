@@ -1,16 +1,10 @@
 const { expect } = require("chai");
 
-const RoomRepository = require("../lib/repositories/room.repository");
-const VoterRepository = require("../lib/repositories/voter.repository");
+const { ForceReveal } = require("../lib/usecase");
+const { RoomRepository, VoterRepository } = require("../lib/repositories");
+const { RoomNotFoundError, VoterNotFoundError, UserNotAdminError } = require("../lib/errors");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
-
-const RoomNotFoundError = require("../lib/errors/room-not-found");
-const VoterNotFoundError = require("../lib/errors/voter-not-found");
-const UserNotAdminError = require("../lib/errors/user-not-admin");
-
-const ForceReveal = require("../lib/usecase/force-reveal");
-
 const { createRoom, createVoter, createAdminForRoom, createVoterForRoom } = require("./fixtures/index");
 
 describe("Force Reveal", function() {

@@ -1,15 +1,13 @@
 const { expect } = require("chai");
 
-const JoinRoom = require("../lib/usecase/join-room");
-const RoomRepository = require("../lib/repositories/room.repository");
-const VoterRepository = require("../lib/repositories/voter.repository");
+const { JoinRoom } = require("../lib/usecase");
+const { RoomRepository, VoterRepository } = require("../lib/repositories");
+const { RoomNotFoundError } = require("../lib/errors");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const StubConnection = require("./stubs/stub-connection");
 
-const RoomNotFoundError = require("../lib/errors/room-not-found");
-
-const { createRoom, createAdmin, createVoter } = require("./fixtures/index");
+const { createRoom, createAdmin, createVoter } = require("./fixtures");
 
 describe("Join Room", function() {
 
