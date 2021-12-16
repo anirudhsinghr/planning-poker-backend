@@ -49,7 +49,6 @@ describe("Create Room", function() {
 
     useCase.execute(input);
 
-    expect(eventBroadcaster.addedParticipantsToCorrectRoom(input)).to.be.true;
     expect(roomRepository.findById(input.roomId)).not.to.be.null;
     expect(voterRepository.findById(input.voterId)).not.be.undefined;
   });

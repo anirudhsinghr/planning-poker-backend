@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test/**/*.js",
+    "test:watch": "mocha ./test/**/*.js -w",
     "test:unit": "mocha ./test/unit",
     "test:integration": "mocha ./test/integration",
     "test:unit:watch": "mocha ./test/unit -w",
