@@ -1,10 +1,9 @@
 const { expect } = require("chai");
 const axios = require("axios").default;
-const EventSource = require("eventsource");
 
 const { start, stop } = require("../../lib/api");
-const { createRoom } = require("./fixtures");
-const { createRoomUrl } = require("./fixtures")
+const { createRoom, connectToRoom, createRoomUrl } = require("./fixtures")
+const EventSource = require("eventsource");
 
 describe("Room Api", function () {
   beforeEach(() => start());
@@ -19,7 +18,7 @@ describe("Room Api", function () {
   it("a room can be connected to", async function() {
     const { roomId } = await createRoom();
     
-    const connection = new EventSource(`http://localhost:3000/room/${roomId}`);
+    const connection = connectToRoom({ roomId })
     expect(connectingToRoom(connection)).to.be.true;
     
     connection.onopen = () => expect(connectedToRoom(connection)).to.be.true;
