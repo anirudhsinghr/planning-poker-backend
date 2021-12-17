@@ -6,7 +6,6 @@ const { RoomRepository, VoterRepository } = require("../../lib/repositories");
 const { InvalidArgumentError, RoomAlreadyExistsError } = require("../../lib/errors");
 
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
-const StubConnection = require("./stubs/stub-connection");
 
 const { createRoom } = require("./fixtures");
 
@@ -32,40 +31,12 @@ describe("Create Room", function() {
     expect(roomRepository.findById(roomId).id).to.equal(input.roomId);
   });
 
-  it("a new room is created with an admin", function() {
-    const useCase = createUseCase();
-    const input = createUseCaseInput();
-
-    const { roomId } = useCase.execute(input);
-    const room = roomRepository.findById(roomId);
-
-    expect(room.admin()).to.not.be.undefined;
-    expect(room.admin().id).to.equal(input.voterId);
-  });
-
-  it("a new room is created with a single user", function() {
-    const useCase = createUseCase();
-    const input = createUseCaseInput();
-
-    useCase.execute(input);
-
-    expect(roomRepository.findById(input.roomId)).not.to.be.null;
-    expect(voterRepository.findById(input.voterId)).not.be.undefined;
-  });
 
   it("throws error when a new room is created with invalid data", function() {
     const useCase = createUseCase();
 
     expect(
       () => useCase.execute(createUseCaseInput({roomId: null}))
-    ).to.throw(InvalidArgumentError);
-
-    expect(
-      () => useCase.execute(createUseCaseInput({voterId: null}))
-    ).to.throw(InvalidArgumentError);
-
-    expect(
-      () => useCase.execute(createUseCaseInput({connection: null}))
     ).to.throw(InvalidArgumentError);
   });
 
@@ -88,10 +59,10 @@ describe("Create Room", function() {
   });
 
   function createUseCase() {
-    return new CreateRoom({roomRepository, voterRepository, eventBroadcaster});
+    return new CreateRoom({roomRepository});
   }
 
   function createUseCaseInput(overrides) {
-    return { roomId: "new-room-id", voterId: "new-voter-id", connection: new StubConnection(), ...overrides }
+    return { roomId: "new-room-id", ...overrides }
   }
 });

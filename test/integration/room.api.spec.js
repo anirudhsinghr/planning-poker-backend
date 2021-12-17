@@ -11,8 +11,7 @@ describe("Room Api", function () {
       .end(function (err, res) {
         expect(res.body).to.not.be.undefined;
         expect(res.body.roomId).to.not.be.undefined;
-        expect(res.body.adminId).to.not.be.undefined;
         done();
       });
-  })
+  });
 })
