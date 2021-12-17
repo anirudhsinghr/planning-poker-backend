@@ -34,6 +34,17 @@ describe("Join Room", function() {
     expect(room.voterCount()).to.equal(1);
   });
 
+  it("First user joining a room is its admin", function() {
+    const room = createRoom({ roomId: "new-room-id", roomRepository });
+    const input = createUseCaseInput({ roomId: room.id });
+    const useCase = new createUsecase();
+    
+    useCase.execute(input);
+
+    expect(voterRepository.findById(input.voterId).isAdminOf(room)).to.be.true;
+    expect(room.voterCount()).to.equal(1);
+  });
+
   it("Voter joining a non-existant room throws error", function() {
     const useCase = new createUsecase();
     const input = createUseCaseInput({ roomId: "non-existant" });
