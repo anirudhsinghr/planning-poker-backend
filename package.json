@@ -10,6 +10,8 @@
     "test:integration": "mocha ./test/integration",
     "test:unit:watch": "mocha ./test/unit -w",
     "test:integration:watch": "mocha ./test/integration -w",
+    "coverage:unit": "nyc mocha ./test/unit/**",
+    "coverage:unit:html": "nyc --reporter=html mocha ./test/unit/**",
     "coverage": "nyc mocha ./test/**/*.js",
     "coverage:html": "nyc --reporter=html mocha ./test/**/*.js"
   },

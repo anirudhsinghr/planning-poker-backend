@@ -7,7 +7,7 @@ const { RoomNotFoundError } = require("../../lib/errors");
 const MockEventBroadcaster = require("./mocks/mock-event-broadcaster");
 const StubConnection = require("./stubs/stub-connection");
 
-const { createRoom, createAdmin, createVoter } = require("./fixtures");
+const { createRoom, createAdmin, createVoter, createAdminForRoom } = require("./fixtures");
 
 describe("Join Room", function() {
 
@@ -43,6 +43,19 @@ describe("Join Room", function() {
 
     expect(voterRepository.findById(input.voterId).isAdminOf(room)).to.be.true;
     expect(room.voterCount()).to.equal(1);
+  });
+
+  it("Only one user becomes the admin of the room", function() {
+    const room = createRoom({ roomId: "new-room-id", roomRepository });
+    const admin = createAdminForRoom({ adminId:"new-admin-id", room, voterRepository })
+    const input = createUseCaseInput({ roomId: room.id });
+    const useCase = new createUsecase();
+    
+    useCase.execute(input);
+
+    expect(voterRepository.findById(input.voterId).isAdminOf(room)).to.be.false;
+    expect(voterRepository.findById(admin.id).isAdminOf(room)).to.be.true;
+    expect(room.voterCount()).to.equal(2);
   });
 
   it("Voter joining a non-existant room throws error", function() {
