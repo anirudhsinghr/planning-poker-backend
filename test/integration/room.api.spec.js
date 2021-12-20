@@ -1,6 +1,6 @@
+const expect = require("chai").expect;
 const axios = require("axios").default;
 const ExpressApiServer = require("../../lib/api");
-const expect = require("chai").expect;
 
 let app = null;
 
