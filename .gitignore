@@ -2,3 +2,6 @@ node_modules
 *-lock.json
 .nyc_output
 coverage
+npm-debug.log
+.DS_Store/
+*.env
